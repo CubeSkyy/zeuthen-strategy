@@ -2,6 +2,8 @@
 
 Calculates the agreed deal between 2 agents negotiating tasks under the Zeuthen Strategy.
 
+Project done to support a written essay for the 2019-2020 Autonomous Agents and Multi-Agent Systems in Instituto Superior Técnico.
+
 ## Example
 
 The input:

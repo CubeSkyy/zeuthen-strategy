@@ -162,8 +162,8 @@ class ZeuthenStrategy:
 
 
 def main():
-    a1_util = [1, 2, 2, 3, 4]
-    a2_util = [4, 3, 2, 2, 2]
+    a1_util = [3,3,2,1]
+    a2_util = [1,2,3,5]
 
     strategy = ZeuthenStrategy(a1_util, a2_util)
 
