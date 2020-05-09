@@ -10,6 +10,9 @@ class ZeuthenStrategy:
         self.A1Deal = []
         self.A2Deal = []
         self.initialAgent = "A1"
+        self.A1Risk = 1.0
+        self.A2Risk = 1.0
+        self.agreed_deal = "No agreement"
 
     @staticmethod
     def swap_element(src, dst, index):
@@ -23,6 +26,14 @@ class ZeuthenStrategy:
 
     def remove_a2_self_deal(self, index):
         self.swap_element(self.A2SelfDeal, self.A2Deal, index)
+
+    def get_agreed_deal(self):
+        if self.get_a1_util(self.A2Deal) >= self.get_a1_util(self.A1SelfDeal):
+            return "A2"
+        elif self.get_a2_util(self.A1Deal) >= self.get_a2_util(self.A2SelfDeal):
+            return "A1"
+        else :
+            return "No deal was agreed"
 
     @staticmethod
     def get_util(deal, utils):
@@ -42,17 +53,17 @@ class ZeuthenStrategy:
         return self.get_a1_util(self.A2Deal) >= self.get_a1_util(self.A1SelfDeal) or self.get_a2_util(
             self.A1Deal) >= self.get_a2_util(self.A2SelfDeal)
 
-    def agreed_deal(self):
-        if self.get_a1_util(self.A2Deal) >= self.get_a1_util(self.A1SelfDeal):
-            return "A2"
+    def updateRisks(self):
+        a1_util_temp = self.get_a1_util(self.A1SelfDeal)
+        if a1_util_temp == 0:
+            self.A1Risk = float("inf")
         else:
-            return "A1"
-
-    def get_a1_risk(self):
-        return (self.get_a1_util(self.A1SelfDeal) - self.get_a1_util(self.A2Deal)) / self.get_a1_util(self.A1SelfDeal)
-
-    def get_a2_risk(self):
-        return (self.get_a2_util(self.A2SelfDeal) - self.get_a2_util(self.A1Deal)) / self.get_a2_util(self.A2SelfDeal)
+            self.A1Risk = (self.get_a1_util(self.A1SelfDeal) - self.get_a1_util(self.A2Deal)) / a1_util_temp
+        a2_util_temp = self.get_a2_util(self.A2SelfDeal)
+        if a2_util_temp == 0:
+            self.A2Risk = float("inf")
+        else:
+            self.A2Risk = (self.get_a2_util(self.A2SelfDeal) - self.get_a2_util(self.A1Deal)) / a2_util_temp
 
     @staticmethod
     def get_min_index(deal, util):
@@ -78,9 +89,9 @@ class ZeuthenStrategy:
         return self.get_agent_min_index(self.A2SelfDeal, self.A2Util, self.A1Util)
 
     def concede(self, agent):
-        if self.get_a1_risk() < self.get_a2_risk():
+        if self.A1Risk < self.A2Risk:
             return "A1"
-        elif self.get_a2_risk() < self.get_a1_risk():
+        elif self.A2Risk < self.A1Risk:
             return "A2"
         else:
             return agent
@@ -90,13 +101,14 @@ class ZeuthenStrategy:
             self.remove_a1_self_deal(self.get_a1_min_index())
         if agent == "A2":
             self.remove_a2_self_deal(self.get_a2_min_index())
+        self.updateRisks()
 
     def get_final_deal(self, agent):
         self.A1SelfDeal.sort()
         self.A2SelfDeal.sort()
         self.A1Deal.sort()
         self.A2Deal.sort()
-        if self.agreed_deal() == "A1":
+        if self.agreed_deal == "A1":
             return self.A1SelfDeal if agent == "A1" else self.A1Deal
         else:
             return self.A2SelfDeal if agent == "A2" else self.A2Deal
@@ -109,14 +121,18 @@ class ZeuthenStrategy:
 
     def compute_result(self):
         agent = self.initialAgent
-        while not self.agreement():
+        while True:
             agent = self.concede(agent)
             self.new_offer(agent)
+            if self.agreement():
+                break
+
+        self.agreed_deal = self.get_agreed_deal()
 
     def print_result(self):
         print("---------------------------")
         print("Initial concede:", self.initialAgent)
-        print("Final Deal:", self.agreed_deal())
+        print("Final Deal:", self.agreed_deal)
         print("A1:", self.get_final_deal("A1"))
         print("A2:", self.get_final_deal("A2"))
         print("A1 util:", self.get_util_final_deal("A1"))
@@ -136,10 +152,14 @@ class ZeuthenStrategy:
 
 
 def main():
-    # a1_util = [2, 2, 3]
-    # a2_util = [1, 1, 2]
-    a1_util = [1, 2, 2, 3, 4]
-    a2_util = [4, 3, 2, 2, 2]
+    # a1_util = [1, 2, 2, 3, 4]
+    # a2_util = [4, 3, 2, 2, 2]
+    # a1_util = [1, 1, 1, 0, 0]
+    # a2_util = [1, 1, 2, 0, 0]
+    a1_util = [-10, 1, 3]
+    a2_util = [0, 3, 1]
+
+
 
     strategy = ZeuthenStrategy(a1_util, a2_util)
 
