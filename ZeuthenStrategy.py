@@ -59,12 +59,12 @@ class ZeuthenStrategy:
     def updateRisks(self):
         a1_util_temp = self.get_a1_util(self.A1SelfDeal)
         if a1_util_temp == 0:
-            self.A1Risk = float("inf")
+            self.A1Risk = 1
         else:
             self.A1Risk = (self.get_a1_util(self.A1SelfDeal) - self.get_a1_util(self.A2Deal)) / a1_util_temp
         a2_util_temp = self.get_a2_util(self.A2SelfDeal)
         if a2_util_temp == 0:
-            self.A2Risk = float("inf")
+            self.A2Risk = 1
         else:
             self.A2Risk = (self.get_a2_util(self.A2SelfDeal) - self.get_a2_util(self.A1Deal)) / a2_util_temp
 
@@ -162,14 +162,8 @@ class ZeuthenStrategy:
 
 
 def main():
-    # a1_util = [1, 2, 2, 3, 4]
-    # a2_util = [4, 3, 2, 2, 2]
-    # a1_util = [1, 1, 1, 0, 0]
-    # a2_util = [1, 1, 2, 0, 0]
-    a1_util = [1, 3, -10]
-    a2_util = [3, 1, -100]
-
-
+    a1_util = [1, 2, 2, 3, 4]
+    a2_util = [4, 3, 2, 2, 2]
 
     strategy = ZeuthenStrategy(a1_util, a2_util)
 
