@@ -35,6 +35,9 @@ class ZeuthenStrategy:
         else :
             return "No deal was agreed"
 
+    def no_agreement(self):
+        return len(self.A1SelfDeal) == 0 and len(self.A2SelfDeal) == 0
+
     @staticmethod
     def get_util(deal, utils):
         sum_ = 0
@@ -51,7 +54,7 @@ class ZeuthenStrategy:
 
     def agreement(self):
         return self.get_a1_util(self.A2Deal) >= self.get_a1_util(self.A1SelfDeal) or self.get_a2_util(
-            self.A1Deal) >= self.get_a2_util(self.A2SelfDeal)
+            self.A1Deal) >= self.get_a2_util(self.A2SelfDeal) or self.no_agreement()
 
     def updateRisks(self):
         a1_util_temp = self.get_a1_util(self.A1SelfDeal)
@@ -130,13 +133,20 @@ class ZeuthenStrategy:
         self.agreed_deal = self.get_agreed_deal()
 
     def print_result(self):
-        print("---------------------------")
-        print("Initial concede:", self.initialAgent)
-        print("Final Deal:", self.agreed_deal)
-        print("A1:", self.get_final_deal("A1"))
-        print("A2:", self.get_final_deal("A2"))
-        print("A1 util:", self.get_util_final_deal("A1"))
-        print("A2 util:", self.get_util_final_deal("A2"))
+        if (self.no_agreement()):
+            print("---------------------------")
+            print("Initial concede:", self.initialAgent)
+            print("No Agreement was reached")
+            print("---------------------------")
+        else:
+            print("---------------------------")
+            print("Initial concede:", self.initialAgent)
+            print("Final Deal:", self.agreed_deal)
+            print("A1:", self.get_final_deal("A1"))
+            print("A2:", self.get_final_deal("A2"))
+            print("A1 util:", self.get_util_final_deal("A1"))
+            print("A2 util:", self.get_util_final_deal("A2"))
+            print("---------------------------")
 
     def reset(self):
         self.A1SelfDeal = list(range(len(self.A1Util)))
@@ -156,8 +166,8 @@ def main():
     # a2_util = [4, 3, 2, 2, 2]
     # a1_util = [1, 1, 1, 0, 0]
     # a2_util = [1, 1, 2, 0, 0]
-    a1_util = [-10, 1, 3]
-    a2_util = [0, 3, 1]
+    a1_util = [1, 3, -10]
+    a2_util = [3, 1, -100]
 
 
 
