@@ -2,7 +2,7 @@
 
 Calculates the agreed deal between 2 agents negotiating tasks under the Zeuthen Strategy.
 
-##Example
+## Example
 
 The input:
 ```python
